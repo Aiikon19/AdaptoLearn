@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AdaptoLearn · Administration</title>
+    <link rel="icon" href="{{ url_for('static',filename='favicon.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}" />
+    <script type="module" src="{{ url_for('static',filename='admin.js') }}"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div id="app"><div class="initial">Loading administration…</div></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <dialog id="modal">
+      <button class="close" aria-label="Close dialog">×</button>
+      <div id="modal-content"></div>
+    </dialog>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+.venv
+instance
+__pycache__
+.pytest_cache
+.git
+AdaptoLearn.pdf
+tests
+.env
+node_modules
+artifacts
+test_users.py
+seed_service.py

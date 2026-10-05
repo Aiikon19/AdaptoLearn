@@ -1,0 +1,19 @@
+{
+  "name": "adaptolearn-ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check_frontend.mjs",
+    "lint": "eslint \"static/**/*.js\" \"tests/**/*.mjs\" \"scripts/**/*.mjs\"",
+    "test": "node --test tests/frontend.test.mjs",
+    "format": "prettier --write \"static/**/*.{js,css}\" \"templates/**/*.html\" \"tests/**/*.mjs\" \"scripts/**/*.mjs\" \"eslint.config.mjs\" \"*.json\"",
+    "format:check": "prettier --check \"static/**/*.{js,css}\" \"templates/**/*.html\" \"tests/**/*.mjs\" \"scripts/**/*.mjs\" \"eslint.config.mjs\" \"*.json\""
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "prettier": "3.9.9"
+  }
+}

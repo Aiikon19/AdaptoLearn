@@ -1,0 +1,181 @@
+{
+  "register": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["name", "email", "password", "institution_id", "programme", "year"],
+    "properties": {
+      "name": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 80
+      },
+      "email": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 254
+      },
+      "password": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 128
+      },
+      "institution_id": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 26
+      },
+      "programme": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      },
+      "year": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 7
+      }
+    }
+  },
+  "forgotPassword": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["email"],
+    "properties": {
+      "email": {
+        "type": "string",
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+        "maxLength": 254
+      }
+    }
+  },
+  "recoverPassword": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["email", "code", "password"],
+    "properties": {
+      "email": {
+        "type": "string",
+        "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+        "maxLength": 254
+      },
+      "code": {
+        "type": "string",
+        "pattern": "^[0-9]{6}$"
+      },
+      "password": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 128
+      }
+    }
+  },
+  "login": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["email", "password", "role"],
+    "properties": {
+      "email": {
+        "type": "string",
+        "maxLength": 254
+      },
+      "password": {
+        "type": "string",
+        "maxLength": 128
+      },
+      "role": {
+        "enum": ["student", "admin"]
+      }
+    }
+  },
+  "verify": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["code"],
+    "properties": {
+      "code": {
+        "type": "string",
+        "pattern": "^[0-9]{6}$"
+      },
+      "email": {
+        "type": "string",
+        "maxLength": 254
+      }
+    }
+  },
+  "reset": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["password"],
+    "properties": {
+      "password": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 128
+      }
+    }
+  },
+  "studentAction": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["action"],
+    "properties": {
+      "action": {
+        "enum": ["verify", "unverify", "suspend", "reactivate", "delete", "resend"]
+      }
+    }
+  },
+  "institution": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["studentEmailDomain", "isActive"],
+    "properties": {
+      "studentEmailDomain": {
+        "type": "string",
+        "pattern": "^(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$",
+        "maxLength": 150
+      },
+      "isActive": {
+        "type": "boolean"
+      }
+    }
+  },
+  "adminAction": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["active", "adminLevel"],
+    "properties": {
+      "active": {
+        "type": "boolean"
+      },
+      "adminLevel": {
+        "enum": ["admin", "super-admin"]
+      }
+    }
+  },
+  "announcement": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["title", "body", "institution_id", "send_at"],
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 150
+      },
+      "body": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 2000
+      },
+      "institution_id": {
+        "type": ["integer", "null"],
+        "minimum": 1,
+        "maximum": 26
+      },
+      "send_at": {
+        "type": ["string", "null"],
+        "maxLength": 40
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#1c6654" />
+    <title>AdaptoLearn · Better together</title>
+    <link rel="icon" href="{{ url_for('static',filename='favicon.svg') }}" type="image/svg+xml" />
+    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}" />
+    <script type="module" src="{{ url_for('static',filename='app.js') }}"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div id="app">
+      <div class="initial">AdaptoLearn <span class="loader"></span></div>
+    </div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <dialog id="modal">
+      <button class="close" aria-label="Close dialog">×</button>
+      <div id="modal-content"></div>
+    </dialog>
+    <noscript
+      >This interactive application requires JavaScript. Please enable it in your browser.</noscript
+    >
+  </body>
+</html>
