@@ -72,6 +72,14 @@ def browser_site(tmp_path):
 
 def enroll(page, url, mailbox):
     page.goto(url)
+    landing_copy_size = page.locator(".landing-copy").evaluate(
+        "(node) => parseFloat(getComputedStyle(node).fontSize)"
+    )
+    assert landing_copy_size >= 16
+    assert page.locator("body").get_attribute("class") is None
+    assert page.get_by_role("heading", name="Great things are learned together.").is_visible()
+    assert page.locator(".landing-feature").count() == 3
+    assert page.locator("#faqs details").count() == 4
     page.get_by_role("button", name="Get started").click()
     page.get_by_label("Full name").fill("New Learner")
     email = page.get_by_label("Student email", exact=True)
@@ -103,6 +111,14 @@ def enroll(page, url, mailbox):
     assert page.get_by_label("Digit 6", exact=True).input_value() == code[-1]
     page.get_by_role("button", name="Verify email", exact=True).click()
     page.get_by_role("heading", name="People to learn with").wait_for()
+    dashboard_date_size = page.locator(".dashboard-date").evaluate(
+        "(node) => parseFloat(getComputedStyle(node).fontSize)"
+    )
+    peer_time_size = page.locator(".dashboard-peer-time").first.evaluate(
+        "(node) => parseFloat(getComputedStyle(node).fontSize)"
+    )
+    assert dashboard_date_size >= 12
+    assert peer_time_size >= 11
 
 
 def test_signup_verification_desktop_and_student_flow(browser_site):

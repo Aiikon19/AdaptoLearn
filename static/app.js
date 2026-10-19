@@ -86,7 +86,7 @@ function render() {
     ['institutions', '⌂', 'Universities'],
   ];
   el('#app').innerHTML =
-    `<aside class="sidebar"><div class="brand"><span class="brand-mark">↗</span>AdaptoLearn</div><small>YOUR WORKSPACE</small><nav class="nav" aria-label="Student navigation">${navigation.map(([p, i, n]) => `<button class="${p === page ? 'active' : ''}" data-nav="${p}" ${p === page ? 'aria-current="page"' : ''}><span class="nav-icon" aria-hidden="true">${i}</span>${n}</button>`).join('')}</nav><div class="side-note"><strong>Better, together.</strong>A verified community to ask questions and share ideas.</div><div class="side-user">${avatar(user)}<span><b>${esc(user.name)}</b><span class="muted">${esc(user.acronym)} · Year ${user.year}</span></span></div></aside><div class="workspace"><header class="topbar"><button class="icon-btn mobile-menu" data-menu="true" aria-label="Open navigation">☰</button><span class="breadcrumb">Workspace / ${esc(navigation.find((x) => x[0] === page)?.[2])}</span><div class="top-actions"><button class="text-btn" data-nav="notifications">Notifications ${activity.notifications.filter((n) => !n.seen).length || ''}</button><button class="text-btn" data-logout="true">Sign out</button></div></header><main class="main" id="main"><div id="page-content"></div><footer class="footer">AdaptoLearn · Built for shared progress.<span>26 universities. Endless possibilities.</span></footer></main></div>`;
+    `<aside class="sidebar"><a class="brand" href="/" aria-label="AdaptoLearn"><img class="brand-logo" src="/static/img/logo-mark.png" alt="">AdaptoLearn</a><small>YOUR WORKSPACE</small><nav class="nav" aria-label="Student navigation">${navigation.map(([p, i, n]) => `<button class="${p === page ? 'active' : ''}" data-nav="${p}" ${p === page ? 'aria-current="page"' : ''}><span class="nav-icon" aria-hidden="true">${i}</span>${n}${p === 'connections' && activity.connections.filter((c) => c.status === 'pending' && c.receiver === user.id).length ? `<span class="nav-count">${activity.connections.filter((c) => c.status === 'pending' && c.receiver === user.id).length}</span>` : ''}${p === 'notifications' && activity.notifications.filter((n) => !n.seen).length ? `<span class="nav-count">${activity.notifications.filter((n) => !n.seen).length}</span>` : ''}</button>`).join('')}</nav><div class="side-note"><span class="side-note-icon">♧</span><strong>Your campus.<br>Your learning circle.</strong><p>Connect with verified students across South Africa.</p><button class="text-btn" data-nav="peers">Explore peers ↗</button></div><div class="side-support"><span>?</span>Help &amp; support</div><div class="side-user">${avatar(user)}<span><b>${esc(user.name)}</b><span class="muted">Verified student</span></span><button class="side-user-menu" data-logout="true" aria-label="Sign out">⋮</button></div></aside><div class="workspace"><header class="topbar"><button class="icon-btn mobile-menu" data-menu="true" aria-label="Open navigation">☰</button><span class="breadcrumb">Workspace <span aria-hidden="true">/</span> <b>${esc(navigation.find((x) => x[0] === page)?.[2])}</b></span><div class="top-actions"><span class="verified-status"><span>✓</span> Student verified</span><button class="top-notifications" data-nav="notifications" aria-label="Notifications">♧${activity.notifications.filter((n) => !n.seen).length ? `<i>${activity.notifications.filter((n) => !n.seen).length}</i>` : ''}</button><button class="text-btn top-signout" data-logout="true">Sign out</button></div></header><main class="main" id="main"><div id="page-content"></div><footer class="footer">AdaptoLearn · Built for shared progress.<span>Learning is a shared effort.</span></footer></main></div>`;
   const views = {
     dashboard,
     peers: peerPage,
@@ -116,37 +116,59 @@ function card(p) {
     )}</div><div class="card-actions"><button class="btn secondary" data-peer="${p.id}">View profile</button>${c && c.status !== 'declined' ? `<button class="btn soft" data-nav="connections">${c.status === 'accepted' ? 'Connected ✓' : 'Request pending'}</button>` : `<button class="btn" data-connect="${p.id}">Connect ↗</button>`}</div></article>`;
 }
 function dashboard() {
-  return (
-    title(
-      'Welcome back, ' + user.name.split(' ')[0],
-      'A good study partner can change the way you learn.',
-    ) +
-    `<section class="hero"><div class="hero-text"><div class="eyebrow">Learn together. Go further.</div><h2>Your next breakthrough<br>starts with a connection.</h2><p>Find peers who get your goals. Share what you know, learn what you need, and grow together.</p><button class="btn" data-nav="peers">Explore your matches ↗</button></div><div class="orbit" aria-hidden="true"><div class="orb one">✎</div><div class="orb two">⌘</div><div class="center">✧</div><div class="orb three">↗</div></div></section><div class="stats">${[
-      [peers.length, 'Recommended peers'],
-      [activity.connections.filter((c) => c.status === 'accepted').length, 'Your connections'],
-      [
-        activity.sessions.filter((s) => ['pending', 'accepted'].includes(s.status)).length,
-        'Upcoming sessions',
-      ],
-      [activity.sessions.filter((s) => s.status === 'completed').length, 'Sessions completed'],
-    ]
-      .map(
-        ([n, label]) =>
-          `<div class="stat"><div class="stat-icon">↗</div><div><b>${n}</b><span>${label}</span></div></div>`,
-      )
-      .join(
-        '',
-      )}</div><div class="dashboard-grid"><section><div class="section-heading"><div><h2>People to learn with</h2><p class="muted">Thoughtful matches, built around you.</p></div><button class="text-btn" data-nav="peers">View all →</button></div><div class="peer-grid">${peers.slice(0, 4).map(card).join('') || empty('Your recommendations will appear as verified students join.')}</div></section><aside><section class="panel"><h3>Upcoming sessions</h3>${
-      activity.sessions
-        .filter((s) => ['pending', 'accepted'].includes(s.status))
-        .slice(0, 3)
-        .map(
-          (s) =>
-            `<div class="session-mini"><div><h4>${esc(s.topic)}</h4><p>with ${esc(partner(s))}</p><p>${esc(s.starts.replace('T', ' '))} SAST</p></div></div>`,
-        )
-        .join('') || '<p class="muted">Make a connection and plan your first session.</p>'
-    }<button class="btn secondary small" data-arrange="true">+ Plan a session</button></section><section class="panel"><h3>Your profile, your possibilities</h3><p class="muted">A little more about you makes a better match.</p><div class="completion-ring"><span id="completion-fill"></span></div><p class="muted">${completion()}% complete</p><button class="text-btn" data-nav="profile">Update your profile →</button></section></aside></div>`
+  const firstName = user.name.split(' ')[0];
+  const upcoming = activity.sessions.filter((s) => ['pending', 'accepted'].includes(s.status));
+  const acceptedConnections = activity.connections.filter((c) => c.status === 'accepted').length;
+  const week = Array.from({ length: 7 }, (_, offset) => {
+    const date = new Date();
+    date.setDate(date.getDate() - ((date.getDay() + 6) % 7) + offset);
+    return date;
+  });
+  const incoming = activity.connections.find(
+    (connection) => connection.status === 'pending' && connection.receiver === user.id,
   );
+  const invitationPeer = incoming ? peers.find((peer) => peer.id === incoming.sender) : null;
+  const profileSkills = user.profile.skills ?? [];
+  const profileNeeds = user.profile.needs ?? [];
+  const focusSubject = user.profile.modules?.[0] ?? user.programme;
+  const peerCards = peers
+    .slice(0, 2)
+    .map((peer) => {
+      const connection = activity.connections.find(
+        (item) => item.sender === peer.id || item.receiver === peer.id,
+      );
+      const availability = (peer.profile.availability ?? [])[0];
+      const skills = (peer.profile.skills ?? []).slice(0, 2);
+      const needs = (peer.profile.needs ?? []).slice(0, 1);
+      return `<article class="dashboard-peer"><div class="dashboard-peer-heading">${avatar(peer)}<div><h3>${esc(peer.name)} <span class="verified-peer" aria-label="Verified">✓</span></h3><p>${esc(peer.institution)}</p></div></div><p class="dashboard-peer-study">${esc(peer.programme)} · Year ${peer.year}</p><div class="dashboard-peer-exchange"><div><span>Can help with</span><div class="dashboard-tags">${skills.map((skill) => `<span class="dashboard-tag">${esc(skill)}</span>`).join('') || '<span class="dashboard-tag">Study skills</span>'}</div></div><div><span>Wants to learn</span><div class="dashboard-tags">${needs.map((need) => `<span class="dashboard-tag need">${esc(need.topic)}</span>`).join('') || '<span class="dashboard-tag need">New perspectives</span>'}</div></div></div><p class="dashboard-peer-time">◷ &nbsp;${availability ? `${esc(availability.day)} ${esc(availability.start)}–${esc(availability.end)}` : 'Flexible study times'}</p><div class="dashboard-peer-actions"><button class="btn secondary small" data-peer="${peer.id}">View profile <span aria-hidden="true">↗</span></button>${connection ? `<button class="btn soft small" data-nav="connections">${connection.status === 'accepted' ? 'Connected ✓' : 'Request pending'}</button>` : `<button class="btn small" data-connect="${peer.id}" aria-label="Connect with ${esc(peer.name)}">Connect</button>`}</div></article>`;
+    })
+    .join('');
+  const sessionRows = upcoming
+    .slice(0, 3)
+    .map((session) => {
+      const starts = new Date(`${session.starts}+02:00`);
+      const day = starts.toLocaleDateString('en-ZA', { day: '2-digit' });
+      const month = starts.toLocaleDateString('en-ZA', { month: 'short' }).toUpperCase();
+      const time = starts.toLocaleTimeString('en-ZA', {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'Africa/Johannesburg',
+      });
+      return `<article class="calendar-session"><div class="calendar-date"><span>${month}</span><b>${day}</b></div><div class="calendar-session-info"><h3>${esc(session.topic)}</h3><p>${starts.toLocaleDateString('en-ZA', { weekday: 'long' })} · ${time} · ${esc(session.location)}</p><small>with ${esc(partner(session))}</small></div><span class="status ${session.status}">${session.status === 'accepted' ? 'Confirmed' : 'Awaiting reply'}</span><button class="text-btn" data-nav="sessions">View details →</button></article>`;
+    })
+    .join('');
+  return `<section class="dashboard-welcome"><div><div class="dashboard-date">${new Date().toLocaleDateString('en-ZA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div><h1>A good day to learn, ${esc(firstName)}.</h1><p>Find your next study partner. Make progress, together.</p></div><button class="btn" data-arrange="true" aria-label="Plan a session">Create a session <span aria-hidden="true">＋</span></button></section>
+    <section class="dashboard-stats" aria-label="Your learning at a glance"><article class="dashboard-stat"><span class="dashboard-stat-icon">♧</span><div><b>${acceptedConnections}</b><span>connections</span><small>Your growing learning circle</small></div></article><article class="dashboard-stat"><span class="dashboard-stat-icon">▦</span><div><b>${upcoming.length}</b><span>upcoming sessions</span><small>A little structure for your week</small></div></article><article class="dashboard-stat"><span class="dashboard-stat-icon">◫</span><div><b>${profileSkills.length}</b><span>subjects to share</span><small>Your strengths can help someone</small></div></article></section>
+    <div class="workspace-dashboard"><div class="dashboard-primary"><section class="dashboard-matches"><div class="dashboard-section-heading"><div><h2>Meet your next study partner <span class="sr-only">People to learn with</span></h2><p>Shared subjects. Different strengths. A good place to start.</p></div><button class="text-btn" data-nav="peers">Find peers ↗</button></div><div class="dashboard-quick-filters"><span>${esc(focusSubject)}</span><span>All universities</span><span>Online &amp; campus</span><button data-nav="peers" aria-label="More peer filters">☷</button></div><div class="dashboard-peer-grid">${peerCards || empty('Your recommendations will appear as verified students join.')}</div></section>
+    <section class="dashboard-calendar"><div class="dashboard-section-heading"><h2>On your study calendar</h2><button class="text-btn" data-nav="sessions">All sessions ↗</button></div>${sessionRows || empty('Make a connection and plan your first study session.')}<div class="dashboard-tip"><span>♧</span><div><b>A small goal makes a better session.</b><p>Agree on one topic and bring a question you want to work through.</p></div></div></section></div>
+    <aside class="dashboard-sidebar"><section class="week-card"><div class="dashboard-section-heading"><h3>Your week</h3><span class="week-calendar-icon">▦</span></div><div class="week-days">${week.map((date, index) => `<div class="${index === (new Date().getDay() + 6) % 7 ? 'today' : ''}"><span>${date.toLocaleDateString('en-ZA', { weekday: 'short' }).slice(0, 1)}</span><b>${date.getDate()}</b>${index === 1 && upcoming.length ? '<i></i>' : ''}</div>`).join('')}</div><div class="week-next"><small>UP NEXT · ${upcoming[0] ? new Date(`${upcoming[0].starts}+02:00`).toLocaleDateString('en-ZA', { weekday: 'long' }).toUpperCase() : 'WHEN YOU’RE READY'}</small><b>${upcoming[0] ? esc(upcoming[0].topic) : 'Make room to learn together'}</b><span>◷ &nbsp;${upcoming[0] ? `${new Date(`${upcoming[0].starts}+02:00`).toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Johannesburg' })} · ${esc(upcoming[0].location)}` : 'Your next session starts here'}</span></div><button class="btn secondary small" data-nav="sessions">${upcoming[0] ? 'Open session' : 'View study sessions'} <span aria-hidden="true">↗</span></button></section>
+    <section class="invitation-card"><div class="dashboard-section-heading"><h3>An invitation to learn</h3>${incoming ? '<span class="invitation-badge">New</span>' : ''}</div>${incoming ? `<div class="invitation-person">${invitationPeer ? avatar(invitationPeer) : '<span class="avatar">✓</span>'}<div><b>${esc(incoming.sender_name)}</b><small>${invitationPeer ? esc(invitationPeer.institution) : 'AdaptoLearn student'}</small></div></div><p>Connect with a fellow student and start learning together.</p><div class="invitation-actions"><button class="btn small" data-connection="${incoming.id}" data-status="accepted">Accept</button><button class="btn secondary small" data-peer="${incoming.sender}">View profile</button></div>` : `<p class="invitation-empty">No new invitations right now. Explore your matches and say hello.</p><button class="btn secondary small" data-nav="peers">Find your people ↗</button>`}</section>
+    <section class="exchange-card"><div class="dashboard-section-heading"><h3>Your learning exchange</h3><button class="exchange-edit" data-nav="profile" aria-label="Update your profile">↔</button></div><small>YOU CAN HELP WITH</small><div class="exchange-tags">${
+      profileSkills
+        .slice(0, 4)
+        .map((skill) => `<span>${esc(skill)}</span>`)
+        .join('') || '<span>Add your strengths</span>'
+    }</div><small>YOU’RE WORKING ON</small><div class="exchange-tags"><span class="exchange-need">${profileNeeds[0] ? esc(profileNeeds[0].topic) : 'Add a learning goal'}</span></div><button class="exchange-update" data-nav="profile">Update my profile ↗</button></section></aside></div>`;
 }
 function peerPage() {
   return (
